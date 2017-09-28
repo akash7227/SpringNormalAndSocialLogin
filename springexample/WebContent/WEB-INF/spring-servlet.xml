@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context 
+   		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+   		http://www.springframework.org/schema/mvc 
+   		http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+   		http://www.springframework.org/schema/tx 
+   		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<context:component-scan base-package="com.springexample" />
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/MyBatisProjects" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="model" />
+		<property name="mapperLocations" value="classpath*:com/springexample/mappers/*.xml" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com/springexample/mappers" />
+	</bean>
+
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<!-- SMTP settings -->
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="akashkumarsingh57@gmail.com" />
+		<property name="password" value="87790000" />
+
+		<property name="javaMailProperties">
+			<!-- additional properties specific to JavaMail -->
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+		<property name="basename" value="messages" /> </bean> -->
+	<!-- <bean id="userService" class="com."></bean> -->
+
+	<!-- <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"> 
+		<property name="mappings"> <props> <prop key="/test">testController</prop> 
+		<prop key="/users">userController</prop> </props> </property> </bean> <bean 
+		id="methodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver" 
+		lazy-init="default"> <property name="mappings"> <props> <prop key="/test">testMethod</prop> 
+		<prop key="/user">getAllUsers</prop> </props> </property> </bean> <bean id="testController" 
+		class="com.springexample.controller.TestController"> <property name="methodNameResolver" 
+		ref="methodresolver"></property> </bean> <bean id="userController" class="com.springexample.controller.UserController"> 
+		<property name="methodNameResolver" ref="methodNameResolver"></property> 
+		</bean> -->
+</beans>
